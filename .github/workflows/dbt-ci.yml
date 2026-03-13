@@ -1,0 +1,60 @@
+name: ETL Hub
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  dbt-test:
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: dbt_user
+          POSTGRES_PASSWORD: dbt_pass
+          POSTGRES_DB: etl_hub
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U dbt_user -d etl_hub"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 5
+
+    env:
+      DBT_HOST: localhost
+      DBT_USER: dbt_user
+      DBT_PASS: dbt_pass
+      DBT_DBNAME: etl_hub
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dbt-postgres
+        run: pip install dbt-postgres~=1.7
+
+      - name: Verify dbt connection
+        working-directory: dbt_project
+        run: dbt debug --profiles-dir .
+
+      - name: Load seed data
+        working-directory: dbt_project
+        run: dbt seed --profiles-dir .
+
+      - name: Build models
+        working-directory: dbt_project
+        run: dbt run --profiles-dir .
+
+      - name: Run automated tests
+        working-directory: dbt_project
+        run: dbt test --profiles-dir .

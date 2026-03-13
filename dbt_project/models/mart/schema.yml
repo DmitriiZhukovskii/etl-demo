@@ -1,0 +1,24 @@
+version: 2
+
+models:
+  - name: mart_customer_orders
+    description: "Сводка заказов по клиентам"
+    columns:
+      - name: customer_id
+        tests:
+          - unique
+          - not_null
+
+      - name: customer_name
+        tests:
+          - not_null
+
+      - name: total_orders
+        description: "Количество заказов >= 0"
+        tests:
+          - not_null
+
+      - name: total_revenue
+        description: "Суммарная выручка"
+        tests:
+          - not_null

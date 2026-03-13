@@ -1,0 +1,54 @@
+version: 2
+
+models:
+  - name: stg_orders
+    description: "Очищенные и стандартизованные заказы из систем-источников"
+    columns:
+      - name: order_id
+        description: "Уникальный идентификатор заказа"
+        tests:
+          - unique
+          - not_null
+
+      - name: customer_id
+        description: "ID клиента"
+        tests:
+          - not_null
+          - relationships:
+              to: ref('stg_customers')
+              field: customer_id
+
+      - name: source_system
+        description: "Система-источник"
+        tests:
+          - not_null
+          - accepted_values:
+              values: ["ERP_A", "CRM_B"]
+
+      - name: quantity
+        description: "Количество"
+        tests:
+          - not_null
+
+      - name: unit_price
+        description: "Цена за единицу"
+        tests:
+          - not_null
+
+      - name: line_total
+        description: "Сумма строки (quantity * unit_price)"
+        tests:
+          - not_null
+
+  - name: stg_customers
+    description: "Справочник клиентов"
+    columns:
+      - name: customer_id
+        description: "Уникальный ID клиента"
+        tests:
+          - unique
+          - not_null
+
+      - name: customer_name
+        tests:
+          - not_null

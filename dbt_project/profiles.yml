@@ -1,0 +1,12 @@
+etl_hub:
+  target: dev
+  outputs:
+    dev:
+      type: postgres
+      host: "{{ env_var('DBT_HOST', 'localhost') }}"
+      port: 5432
+      user: "{{ env_var('DBT_USER', 'dbt_user') }}"
+      pass: "{{ env_var('DBT_PASS', 'dbt_pass') }}"
+      dbname: "{{ env_var('DBT_DBNAME', 'etl_hub') }}"
+      schema: public
+      threads: 2

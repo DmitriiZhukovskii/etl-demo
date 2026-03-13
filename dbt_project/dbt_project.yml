@@ -1,0 +1,17 @@
+name: "etl_hub"
+version: "1.0.0"
+
+profile: "etl_hub"
+
+model-paths: ["models"]
+seed-paths: ["seeds"]
+test-paths: ["tests"]
+macro-paths: ["macros"]
+
+clean-targets:
+  - "target"
+  - "dbt_packages"
+
+seeds:
+  etl_hub:
+    +schema: raw
